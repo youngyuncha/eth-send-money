@@ -5,7 +5,8 @@
 <script type="text/javascript" src="./lib/bignumber.min.js"></script>
 <script type="text/javascript" src="./lib/web3-light.js"></script>
 <script type="text/javascript">
-   
+   //송신 수신 할수있는 스크립트를 만들어줘야하므로 내가 가진 계정들을 볼수있는 화면과 그계정들이 가지고 있는 금액에 대해서
+   // 표시할수있는 창을 만들어줘야하는데
     var Web3 = require('web3');
     var web3 = new Web3();
     web3.setProvider(new web3.providers.HttpProvider("http://localhost:8545"));
@@ -13,16 +14,16 @@
     function refreshBalance() { 
 		// tablePlace를 초기화하고 계좌수 만큼 테이블의 행을 생성합니다.
 		document.getElementById("tablePlace").innerText = " ";
-		var idiv = document.createElement('div');
-		document.getElementById("tablePlace").appendChild(idiv);
-		var list = web3.eth.accounts;
+		var idiv = document.createElement('div');       //테이블 생성
+		document.getElementById("tablePlace").appendChild(idiv); //appendchild 선택한요소안에 자식요소 추가
+		var list = web3.eth.accounts;         //노드안에 있는 계정들
 		var total = 0;
 		var input ="<table>";
-		for(var i = 0; i<list.length; i++){
-			var tempB= parseFloat(web3.fromWei(web3.eth.getBalance(list[i]),"ether"));
-			console.log('Account:('+tempB+')');
+		for(var i = 0; i<list.length; i++){      //0번쨰부터 차례대로 모든 계정들의 벨런스를 가져온다.
+			var tempB= parseFloat(web3.fromWei(web3.eth.getBalance(list[i]),"ether")); //잔액확인
+			console.log('Account:('+tempB+')');  //계정에 잔고가 얼마나있나 표시
 			input +="<tr><td>"+ list[i] + "</td><td>" + tempB +" ETHER</td></tr>";
-			total+=tempB;
+			total+=tempB;  //복합연산자 total= total+tempB 과같다
 		}
 		input +="<tr><td><strong> TOTAL </strong></td><td><strong><font color='red'>" + total +" ETHER</font></strong></td></tr></table>";
 		idiv.innerHTML = input;	
@@ -31,7 +32,7 @@
 	// 사용자의 계좌들을 select로 만듭니다.
 	function makeSelect() { 
 		var list = web3.eth.accounts;
-		var select =  document.getElementById('accounts');
+		var select =  document.getElementById('accounts');   // 각계좌들이 SELECT이고 계정을 연동시켜주고 option을 추가시켜줍니다.
 		for(var i = 0; i<list.length; i++){
 			var opt=document.createElement('option');
 			opt.value = list[i];
@@ -40,24 +41,24 @@
 		}
 	}
 	function send(){ 
-	var address = document.getElementById('accounts').value;
-	var toAddress = document.getElementById('toaddr').value;
-	var amount = web3.toWei(document.getElementById('amount').value,"ether");
+	var address = document.getElementById('accounts').value;   //송금.
+	var toAddress = document.getElementById('toaddr').value;   // 받을대상
+	var amount = web3.toWei(document.getElementById('amount').value,"ether");  //입력한 양을 wei로 변환해서 amount에서 가지고 있다.
 	//web3.eth.defaultAccount = address;
-	if(web3.personal.unlockAccount(address,document.getElementById('pass').value)){
-		web3.eth.sendTransaction({from: address, to:toAddress, value:amount},function(err,result){
-			if(!err)
+	if(web3.personal.unlockAccount(address,document.getElementById('pass').value)){      //if(계정을 언락해주고)->true,false로 출력된다. true일 경우 실행
+		web3.eth.sendTransaction({from: address, to:toAddress, value:amount},function(err,result){ //이더전송트랜젝션을 입력(누구로부터 누구에게 얼마)
+			if(!err) //콜벡함수 에러가 없다면
 			{
-			    document.getElementById("message").innerText = " ";
+			    document.getElementById("message").innerText = " ";                 //메시지에게 결과를 넣겠다.
 		        var idiv = document.createElement('div');
 		        document.getElementById("message").appendChild(idiv);
 				var input ="<p>"
-				input +="Result: " + result + "</p>";
+				input +="Result: " + result + "</p>";      //화면에 결과값보여줌
 		        idiv.innerHTML = input;
 				console.log('Transaction is sent Successful!('+result+')');
 			}
 			else
-				console.log(err);
+				console.log(err);   //에러가있으면 화면에 보여줌
 		});}
 	}
 </script>
